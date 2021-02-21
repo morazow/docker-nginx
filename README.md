@@ -5,7 +5,7 @@
 [![Docker Pulls][pulls-badge]][hub-link]
 
 [Nginx][nginx] proxy server that runs inside the [Google Distroless][distroless]
-base Debian 10 image.
+base Debian 10 (Buster) image.
 
 ## Building
 
