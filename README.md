@@ -12,8 +12,8 @@ base Debian 10 (Buster) image.
 Build with a version and corresponding tar [`sha256sum`][tars]:
 
 ```sh
-VERSION="1.18.0" && \
-SHA256SUM="4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99" && \
+VERSION="1.19.7" && \
+SHA256SUM="7ae4dd020c41d3a5e1e6a8578fcc60e508e3e27e7668e845ddc87a05a775b50e" && \
 docker build --build-arg NGINX_VERSION="$VERSION" \
     --build-arg NGINX_SHA256="$SHA256SUM" \
     -f Dockerfile \
