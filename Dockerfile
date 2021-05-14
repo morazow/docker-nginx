@@ -1,4 +1,4 @@
-FROM morazow/openssl:1.1.1j as BASE_BUILD
+FROM morazow/openssl:1.1.1k as BASE_BUILD
 
 ARG NGINX_VERSION=
 ARG NGINX_SHA256=
