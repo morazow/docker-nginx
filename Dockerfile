@@ -136,7 +136,8 @@ RUN set -e -x && \
         --with-ld-opt="-static" \
         --with-cc-opt="-static -static-libgcc -O3 \
             -Wl,--gc-sections -ffunction-sections -fdata-sections \
-            -fPIE -fstack-protector-all -Wformat -Werror=format-security \
+            -flto -funsafe-math-optimizations -fstack-protector-all \
+            -Wformat -Werror=format-security \
             -D_FORTIFY_SOURCE=2" \
         --with-pcre-jit \
         --with-pcre=../pcre2-${PCRE_VERSION} \
