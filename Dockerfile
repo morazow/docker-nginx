@@ -27,14 +27,9 @@ ARG PCRE_PGP_KEY="45F68D54BBE23FB3039B46E59766E084FB0F43D8"
 ARG PCRE_TAR_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
 ARG PCRE_SIG_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz.sig"
 
-ARG ZLIB_VERSION="1.2.13"
-ARG ZLIB_SHA256="b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30"
-ARG ZLIB_PGP_KEY="5ED46A6721D365587791E2AA783FCD8E58BCAFBA"
+ARG ZLIB_URL="https://github.com/cloudflare/zlib.git"
 
-ARG ZLIB_TAR_URL="https://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
-ARG ZLIB_ASC_URL="https://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz.asc"
-
-ARG ESSENTIAL_PACKAGES="build-essential ca-certificates curl gnupg2"
+ARG ESSENTIAL_PACKAGES="build-essential ca-certificates curl git gnupg2"
 
 RUN set -e -x && \
     \
@@ -81,18 +76,10 @@ RUN set -e -x && \
 
  RUN set -e -x && \
     \
-    echo "Download zlib-${ZLIB_VERSION}.tar.gz" && \
-    curl ${ZLIB_TAR_URL} -o /tmp/zlib.tar.gz && \
-    curl ${ZLIB_ASC_URL} -o /tmp/zlib.tar.gz.asc && \
-    \
-    echo "${ZLIB_SHA256} /tmp/zlib.tar.gz" | sha256sum -c - && \
-    GNUPGHOME="$(mktemp -d)" && \
-    export GNUPGHOME && \
-    (gpg2 --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys "$ZLIB_PGP_KEY" \
-     || gpg2 --no-tty --keyserver hkps://keys.openpgp.org --recv-keys "$ZLIB_PGP_KEY") && \
-    gpg2 --batch --verify /tmp/zlib.tar.gz.asc /tmp/zlib.tar.gz && \
-    tar -C /tmp -xf /tmp/zlib.tar.gz && \
-    rm -rf $GNUPGHOME /tmp/zlib.tar.gz /tmp/zlib.tar.gz.asc
+    echo "Git clone and configure Cloudflare Zlib" && \
+    git clone --depth 1 --recursive ${ZLIB_URL} /tmp/zlib && \
+    cd /tmp/zlib && \
+    ./configure
 
  ## NGINX Build
 
@@ -142,7 +129,7 @@ RUN set -e -x && \
             -D_FORTIFY_SOURCE=2" \
         --with-pcre-jit \
         --with-pcre=../pcre2-${PCRE_VERSION} \
-        --with-zlib=../zlib-${ZLIB_VERSION} \
+        --with-zlib=../zlib \
         \
         #
         # From https://github.com/trimstray/nginx-admins-handbook/blob/master/doc/SSL_TLS_BASICS.md#tls-versions
