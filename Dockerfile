@@ -81,6 +81,14 @@ RUN set -e -x && \
     cd /tmp/zlib && \
     ./configure
 
+## Set Misc Module
+
+RUN set -e -x && \
+    \
+    echo "Git clone set-misc-nginx-module" && \
+    git clone --depth 1 --recursive https://github.com/openresty/set-misc-nginx-module.git /tmp/set-misc-nginx-module && \
+    git clone --depth 1 --recursive https://github.com/vision5/ngx_devel_kit.git /tmp/ngx-devel-kit
+
  ## NGINX Build
 
  RUN set -e -x && \
@@ -130,6 +138,8 @@ RUN set -e -x && \
         --with-pcre-jit \
         --with-pcre=../pcre2-${PCRE_VERSION} \
         --with-zlib=../zlib \
+        --add-module=/tmp/ngx-devel-kit \
+        --add-module=/tmp/set-misc-nginx-module \
         \
         #
         # From https://github.com/trimstray/nginx-admins-handbook/blob/master/doc/SSL_TLS_BASICS.md#tls-versions
