@@ -1,5 +1,15 @@
 # Developer Guide
 
+## GCC Optimization Options When Building From Source
+
+We are building the `nginx` from source using GCC options for optimization and security.
+
+### References
+
+- [The GNU Linker](https://linux.die.net/man/1/ld)
+- [The GNU C and C++ Compiler](https://linux.die.net/man/1/gcc)
+- [Build Options to Improve Performance and Security of Nginx](https://www.unixteacher.org/blog/build-options-to-improve-the-performance-and-security-of-nginx/)
+
 ## Statically Building Nginx
 
 We are building `nginx` executable statically to be used in a `static` Distroless container. However, `nginx` still depends on the shared (dynamic) libraries at runtime to open files such as `/etc/passwd`.
@@ -32,6 +42,6 @@ For example, `getpwnam` is used to open the `/etc/passwd` file, which requires `
 
 Therefore, we also copy these required shared object (`.so`) to final Distroless image.
 
-## References
+### References
 
-- https://unix.stackexchange.com/questions/386548/nginx-wont-start-getpwnamnginx-failed-in-etc-nginx-nginx-conf5#comment687896_386548
+- [Stackoverflow comment on `getpwnam` error](https://unix.stackexchange.com/questions/386548/nginx-wont-start-getpwnamnginx-failed-in-etc-nginx-nginx-conf5#comment687896_386548)
