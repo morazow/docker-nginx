@@ -188,6 +188,17 @@ RUN set -e -x && \
         /var/tmp/* \
         /var/lib/apt/lists/*
 
+FROM gcr.io/distroless/static-debian11:nonroot
+COPY --from=BASE_BUILD /etc/nginx /etc/nginx
+COPY --from=BASE_BUILD /usr/local/nginx/sbin/nginx /sbin/nginx
+COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/ld*so* /lib/x86_64-linux-gnu/
+COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/libc-*so* /lib/x86_64-linux-gnu/
+COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/libc.so* /lib/x86_64-linux-gnu/
+COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/libnss_files*so* /lib/x86_64-linux-gnu/
+COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/libnss_compat*so* /lib/x86_64-linux-gnu/
+
+USER root
+
 EXPOSE 80/tcp 443/tcp
 
 ENTRYPOINT ["/sbin/nginx"]
