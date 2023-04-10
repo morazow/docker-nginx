@@ -1,5 +1,9 @@
 FROM debian:bullseye-slim as BASE_BUILD
 
+LABEL org.opencontainers.image.source=https://github.com/morazow/docker-nginx
+LABEL org.opencontainers.image.description="Statically build Nginx for distroless image"
+LABEL org.opencontainers.image.licenses=MIT
+
 ARG NGINX_VERSION="1.22.1"
 ARG NGINX_SHA256="9ebb333a9e82b952acd3e2b4aeb1d4ff6406f72491bab6cd9fe69f0dea737f31"
 # https://nginx.org/en/pgp_keys.html
