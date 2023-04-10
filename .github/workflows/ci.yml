@@ -1,0 +1,50 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        if: github.event_name != 'pull_request'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_REGISTRY_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            morazow/nginx:latest
+            morazow/nginx:1.22.1
+            morazow/nginx:stable
+            ghcr.io/morazow/nginx:latest
+            ghcr.io/morazow/nginx:1.22.1
+            ghcr.io/morazow/nginx:stable
+      - name: Update Dockerhub repository description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: morazow/docker-nginx
