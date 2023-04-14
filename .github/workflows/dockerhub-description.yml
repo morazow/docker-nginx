@@ -20,6 +20,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: morazow/docker-nginx
+          # This hub.docker.com repository, not the github
+          repository: morazow/nginx
           enable-url-completion: true
           short-description: ${{ github.event.repository.description }}
