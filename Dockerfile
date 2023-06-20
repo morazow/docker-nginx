@@ -4,22 +4,22 @@ LABEL org.opencontainers.image.source=https://github.com/morazow/docker-nginx
 LABEL org.opencontainers.image.description="Statically build Nginx for distroless image"
 LABEL org.opencontainers.image.licenses=MIT
 
-ARG NGINX_VERSION="1.22.1"
-ARG NGINX_SHA256="9ebb333a9e82b952acd3e2b4aeb1d4ff6406f72491bab6cd9fe69f0dea737f31"
+ARG NGINX_VERSION="1.24.0"
+ARG NGINX_SHA256="77a2541637b92a621e3ee76776c8b7b40cf6d707e69ba53a940283e30ff2f55d"
 # https://nginx.org/en/pgp_keys.html
 ARG NGINX_PGP_KEY="13C82A63B603576156E30A4EA0EA981B66B0D967"
 
 ARG NGINX_TAR_URL="http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 ARG NGINX_ASC_URL="http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc"
 
-ARG OPENSSL_VERSION="3.1.0"
-ARG OPENSSL_SHA256="aaa925ad9828745c4cad9d9efeb273deca820f2cdcf2c3ac7d7c1212b7c497b4"
+ARG OPENSSL_VERSION="3.1.1"
+ARG OPENSSL_SHA256="b3aa61334233b852b63ddb048df181177c2c659eb9d4376008118f9c08d07674"
 # https://www.openssl.org/source/
 # > PGP keys for the signatures are available from the OTC page. Current members
 # > that sign releases include Richard Levitte, Matt Caswell, Paul Dale, and
 # > Tomas Mraz.
 # https://www.openssl.org/community/otc.html
-ARG OPENSSL_PGP_KEY="8657ABB260F056B1E5190839D9C4D26D0E604491"
+ARG OPENSSL_PGP_KEY="8657ABB260F056B1E5190839D9C4D26D0E604491 A21FAB74B0088AA361152586B8EF1A6BA9DA2D5C B7C1C14360F353A36862E4D5231C84CDDCC69C45 7953AC1FBC3DC8B3B292393ED5E9E43F7DF9EE8C"
 
 ARG OPENSSL_TAR_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 ARG OPENSSL_ASC_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.asc"
@@ -52,8 +52,8 @@ RUN set -e -x && \
     echo "${OPENSSL_SHA256} /tmp/openssl.tar.gz" | sha256sum -c - && \
     GNUPGHOME="$(mktemp -d)" && \
     export GNUPGHOME && \
-    ( gpg2 --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys "$OPENSSL_PGP_KEY" \
-    || gpg2 --no-tty --keyserver hkps://keys.openpgp.org --recv-keys "$OPENSSL_PGP_KEY" ) && \
+    ( gpg2 --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys $OPENSSL_PGP_KEY \
+    || gpg2 --no-tty --keyserver hkps://keys.openpgp.org --recv-keys $OPENSSL_PGP_KEY ) && \
     gpg2 --batch --verify /tmp/openssl.tar.gz.asc /tmp/openssl.tar.gz && \
     tar -C /tmp -xf /tmp/openssl.tar.gz && \
     rm -rf $GNUPGHOME /tmp/openssl.tar.gz /tmp/openssl.tar.gz.asc
