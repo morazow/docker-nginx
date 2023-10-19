@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim as BASE_BUILD
+FROM debian:bookworm-slim as BASE_BUILD
 
 LABEL org.opencontainers.image.source=https://github.com/morazow/docker-nginx
 LABEL org.opencontainers.image.description="Statically build Nginx for distroless image"
