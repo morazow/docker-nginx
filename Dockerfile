@@ -174,7 +174,7 @@ RUN set -e -x && \
   /var/tmp/* \
   /var/lib/apt/lists/*
 
-FROM gcr.io/distroless/static-debian11:nonroot
+FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=BASE_BUILD /etc/nginx /etc/nginx
 COPY --from=BASE_BUILD /usr/local/nginx/sbin/nginx /sbin/nginx
 COPY --from=BASE_BUILD /lib/x86_64-linux-gnu/ld*so* /lib/x86_64-linux-gnu/
