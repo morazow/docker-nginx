@@ -19,4 +19,4 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build docker image
-        run: docker build --file Dockerfile --tag morazow/nginx:$(date +%s)
+        run: docker build --file Dockerfile --tag morazow/nginx:$(date +%s) .
