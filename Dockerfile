@@ -12,17 +12,8 @@ ARG NGINX_PGP_KEY="13C82A63B603576156E30A4EA0EA981B66B0D967"
 ARG NGINX_TAR_URL="http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
 ARG NGINX_ASC_URL="http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc"
 
-ARG OPENSSL_VERSION="3.1.1"
-ARG OPENSSL_SHA256="b3aa61334233b852b63ddb048df181177c2c659eb9d4376008118f9c08d07674"
-# https://www.openssl.org/source/
-# > PGP keys for the signatures are available from the OTC page. Current members
-# > that sign releases include Richard Levitte, Matt Caswell, Paul Dale, and
-# > Tomas Mraz.
-# https://www.openssl.org/community/otc.html
-ARG OPENSSL_PGP_KEY="8657ABB260F056B1E5190839D9C4D26D0E604491 A21FAB74B0088AA361152586B8EF1A6BA9DA2D5C B7C1C14360F353A36862E4D5231C84CDDCC69C45 7953AC1FBC3DC8B3B292393ED5E9E43F7DF9EE8C"
-
-ARG OPENSSL_TAR_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-ARG OPENSSL_ASC_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.asc"
+ARG OPENSSL_VERSION="openssl-3.1.3"
+ARG OPENSSL_URL="https://github.com/openssl/openssl.git"
 
 ARG PCRE_VERSION="10.42"
 ARG PCRE_SHA256="c33b418e3b936ee3153de2c61cc638e7e4fe3156022a5c77d0711bcbb9d64f1f"
@@ -41,24 +32,15 @@ RUN set -e -x && \
   apt-get update -y && \
   apt-get install -y --no-install-recommends ${ESSENTIAL_PACKAGES}
 
-# Build OpenSSL
+# Prepare OpenSSL
 
 RUN set -e -x && \
   \
-  echo "==> Download, verify and install openssl-${OPENSSL_VERSION}.tar.gz" && \
-  curl ${OPENSSL_TAR_URL} -o /tmp/openssl.tar.gz && \
-  curl ${OPENSSL_ASC_URL} -o /tmp/openssl.tar.gz.asc && \
-  \
-  echo "${OPENSSL_SHA256} /tmp/openssl.tar.gz" | sha256sum -c - && \
-  GNUPGHOME="$(mktemp -d)" && \
-  export GNUPGHOME && \
-  ( gpg2 --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys $OPENSSL_PGP_KEY \
-  || gpg2 --no-tty --keyserver hkps://keys.openpgp.org --recv-keys $OPENSSL_PGP_KEY ) && \
-  gpg2 --batch --verify /tmp/openssl.tar.gz.asc /tmp/openssl.tar.gz && \
-  tar -C /tmp -xf /tmp/openssl.tar.gz && \
-  rm -rf $GNUPGHOME /tmp/openssl.tar.gz /tmp/openssl.tar.gz.asc
+  echo "==> Git clone OpenSSL and checkout ${OPENSSL_VERSION} branch" && \
+  git clone --branch ${OPENSSL_VERSION} --depth 1 --recursive ${OPENSSL_URL} /tmp/openssl && \
+  cd /tmp/openssl
 
-## PCRE Build
+## Prepare PCRE
 
 RUN set -e -x && \
   \
@@ -76,7 +58,7 @@ RUN set -e -x && \
   tar -C /tmp -xf /tmp/pcre.tar.gz && \
   rm -rf $GNUPGHOME /tmp/pcre.tar.gz /tmp/pcre.tar.gz.sig
 
-## ZLIB BUILD
+## Prepare ZLIB
 
 RUN set -e -x && \
   \
@@ -85,7 +67,7 @@ RUN set -e -x && \
   cd /tmp/zlib && \
   ./configure
 
-## Set Misc Module
+## Prepare Nginx Set Misc Module
 
 RUN set -e -x && \
   \
@@ -93,7 +75,7 @@ RUN set -e -x && \
   git clone --depth 1 --recursive https://github.com/openresty/set-misc-nginx-module.git /tmp/set-misc-nginx-module && \
   git clone --depth 1 --recursive https://github.com/vision5/ngx_devel_kit.git /tmp/ngx-devel-kit
 
-## NGINX Build
+## Build NGINX
 
 RUN set -e -x && \
   \
@@ -163,7 +145,7 @@ RUN set -e -x && \
   # Thus, only use TLS1.2 and TLS1.3 and strong ssl ciphers.
   #
   # Disable TLS1.0 and TLS1.1.
-  --with-openssl=../openssl-${OPENSSL_VERSION} \
+  --with-openssl=../openssl \
   --with-openssl-opt="no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method \
   no-ssl2 no-ssl3 no-weak-ssl-ciphers \
   no-dtls no-dtls1-method no-dtls1_2-method \
