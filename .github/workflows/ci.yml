@@ -37,8 +37,8 @@ jobs:
           push: true
           tags: |
             morazow/nginx:latest
-            morazow/nginx:1.22.1
+            morazow/nginx:1.24.0
             morazow/nginx:stable
             ghcr.io/morazow/nginx:latest
-            ghcr.io/morazow/nginx:1.22.1
+            ghcr.io/morazow/nginx:1.24.0
             ghcr.io/morazow/nginx:stable

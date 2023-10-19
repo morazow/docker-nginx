@@ -11,7 +11,7 @@
 To build the image, run the following command:
 
 ```sh
-docker build -f Dockerfile -t morazow/nginx:1.22.1 .
+docker build -f Dockerfile -t morazow/nginx:1.24.0 .
 ```
 
 ## License
